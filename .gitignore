@@ -47,7 +47,5 @@ Temporary Items
 .apdisk
 
 # project
-./configs/.env
-!kustomize/overlays/*/.env
-./swag
-./application
+.env
+!deployments/kustomize/overlays/*/.env

@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  hello-gin:
+    image: hello-gin-api
+    build:
+      context: ../
+      dockerfile: ./deployments/Dockerfile
+    container_name: hello-gin-api
+    ports:
+      - "9000:9000"

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-gin-api-services
+spec:
+  selector:
+    app: hello-gin-api
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9000

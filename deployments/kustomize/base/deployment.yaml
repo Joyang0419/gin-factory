@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-gin-api
+spec:
+  selector:
+    matchLabels:
+      app: hello-gin-api
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: hello-gin-api
+    spec:
+      containers:
+        - name: hello-gin-api
+          image: asia.gcr.io/PROJECT_ID/hello-gin-api:COMMIT_SHORT_SHA
+          env:
+            - name: DB_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: hello-gin-api-secrets
+                  key: DB_PWD
+
+          ports:
+            - containerPort: 9000
+
+          volumeMounts:
+            - mountPath: /app/configs/.env
+              subPath: .env
+              name: hello-gin-api-config-volume
+
+      volumes:
+        - name: hello-gin-api-config-volume
+          configMap:
+            name: hello-gin-api-config

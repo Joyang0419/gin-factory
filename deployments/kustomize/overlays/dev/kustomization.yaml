@@ -1,0 +1,12 @@
+bases:
+- ../../base
+
+configMapGenerator:
+- name: hello-gin-api-config
+  files:
+  - .env
+
+secretGenerator:
+- name: hello-gin-api-secrets
+  files:
+  - DB_PWD
