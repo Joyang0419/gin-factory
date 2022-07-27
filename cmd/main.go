@@ -3,9 +3,8 @@ package main
 import (
 	"aCupOfGin/api/swag/docs"
 	"aCupOfGin/configs"
-	"aCupOfGin/internal/controller"
-	"aCupOfGin/internal/dao"
-	"aCupOfGin/internal/logger"
+	"aCupOfGin/internal/implements"
+	"aCupOfGin/internal/tools/logger"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -25,11 +24,11 @@ func setGinSwagger(r *gin.Engine) {
 func setRouter(r *gin.Engine) {
 	userGroup := r.Group("user")
 	{
-		userGroup.POST("/users", controller.CreateUser)
-		userGroup.GET("/users", controller.GetUserList)
-		userGroup.GET("/users/:id", controller.GetUser)
-		userGroup.PUT("/users/:id", controller.UpdateUser)
-		userGroup.DELETE("/users/:id", controller.DeleteUserById)
+		userGroup.POST("/users", implements.UserController.CreateUser)
+		userGroup.GET("/users", implements.UserController.GetUsers)
+		userGroup.GET("/users/:id", implements.UserController.GetUser)
+		userGroup.PATCH("/users/:id", implements.UserController.UpdateUser)
+		userGroup.DELETE("/users/:id", implements.UserController.DeleteUser)
 	}
 
 }
@@ -77,8 +76,6 @@ func CorsConfig() cors.Config {
 }
 
 func main() {
-	dao.InitMySql()
-
 	gin.SetMode(configs.ConfigSet.App.GinMode)
 
 	r := gin.New()

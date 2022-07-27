@@ -1,13 +1,13 @@
-package entity
+package entities
 
 import "time"
 
-func (User) TableName() string {
+func (UserEntity) TableName() string {
 	return "sugar_parent"
 }
 
-type User struct {
-	Id          uint64    `json:"id"`
+type UserEntity struct {
+	Id          int       `json:"id"`
 	Vendor      string    `json:"vendor"`
 	Account     string    `json:"account"`
 	AccountType string    `json:"accountType"`
@@ -15,4 +15,5 @@ type User struct {
 	Name        string    `json:"name"`
 	Status      string    `json:"status"`
 	CreateTime  time.Time `json:"createTime"`
+	UpdateTime  time.Time `json:"updateTime"`
 }
