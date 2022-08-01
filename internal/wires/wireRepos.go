@@ -11,7 +11,12 @@ import (
 	"github.com/google/wire"
 )
 
-func InitUserRepo(dm dbManager.InterfaceDBManger) *userRepo.GormUserRepo {
+func InitGORMUserRepo(dm dbManager.InterfaceDBManger) *userRepo.GormUserRepo {
 	wire.Build(userRepo.NewGormUserRepo)
+	return nil
+}
+
+func InitCSVUserRepo(dm dbManager.InterfaceDBManger) *userRepo.CSVUserRepo {
+	wire.Build(userRepo.NewCSVUserRepo)
 	return nil
 }

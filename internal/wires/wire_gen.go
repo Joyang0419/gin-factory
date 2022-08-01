@@ -22,9 +22,14 @@ func InitUserController(us userService.InterfaceUserService) *userController.Imp
 
 // Injectors from wireRepos.go:
 
-func InitUserRepo(dm dbManager.InterfaceDBManger) *userRepo.GormUserRepo {
+func InitGORMUserRepo(dm dbManager.InterfaceDBManger) *userRepo.GormUserRepo {
 	gormUserRepo := userRepo.NewGormUserRepo(dm)
 	return gormUserRepo
+}
+
+func InitCSVUserRepo(dm dbManager.InterfaceDBManger) *userRepo.CSVUserRepo {
+	csvUserRepo := userRepo.NewCSVUserRepo(dm)
+	return csvUserRepo
 }
 
 // Injectors from wireServices.go:
@@ -36,8 +41,14 @@ func InitUserService(ur userRepo.InterfaceUserRepo) *userService.ImplementUserSe
 
 // Injectors from wireTools.go:
 
-func InitGormDBManager(Dialector dbManager.DBDialector, DBMaxIdleConns dbManager.DBMaxIdleConns, DBMaxOpenConns dbManager.DBMaxOpenConns, ConnMaxLifeTimeMinutes dbManager.ConnMaxLifeTimeMinutes) *dbManager.GormDBManager {
-	dbmSetting := dbManager.NewDBMSetting(Dialector, DBMaxIdleConns, DBMaxOpenConns, ConnMaxLifeTimeMinutes)
-	gormDBManager := dbManager.NewGormDBManager(dbmSetting)
+func InitGORMDBManager(Dialector dbManager.DBDialector, DBMaxIdleConns dbManager.DBMaxIdleConns, DBMaxOpenConns dbManager.DBMaxOpenConns, ConnMaxLifeTimeMinutes dbManager.ConnMaxLifeTimeMinutes) *dbManager.GormDBManager {
+	gormdbmSetting := dbManager.NewGORMDBMSetting(Dialector, DBMaxIdleConns, DBMaxOpenConns, ConnMaxLifeTimeMinutes)
+	gormDBManager := dbManager.NewGormDBManager(gormdbmSetting)
 	return gormDBManager
+}
+
+func InitCSVDBManager(filename dbManager.FileName) *dbManager.CSVDBManager {
+	csvdbmSetting := dbManager.NewCSVDBMSetting(filename)
+	csvdbManager := dbManager.NewCSVDBManager(csvdbmSetting)
+	return csvdbManager
 }

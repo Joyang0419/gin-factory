@@ -6,12 +6,25 @@ import (
 	"time"
 )
 
+type DBDialector gorm.Dialector
+type DBMaxIdleConns int
+type DBMaxOpenConns int
+type ConnMaxLifeTimeMinutes int
+
+type GORMDBMSetting struct {
+	Dialector              DBDialector
+	DBMaxIdleConns         DBMaxIdleConns
+	DBMaxOpenConns         DBMaxOpenConns
+	ConnMaxLifeTimeMinutes ConnMaxLifeTimeMinutes
+}
+
 type GormDBManager struct {
+	Settings   *GORMDBMSetting
 	SqlSession *gorm.DB
 }
 
-func (Manager *GormDBManager) Init(Dialector gorm.Dialector, DBMaxIdleConns int, DBMaxOpenConns int, ConnMaxLifeTimeMinutes int) {
-	sqlSession, err := gorm.Open(Dialector, &gorm.Config{})
+func (Manager *GormDBManager) Init() {
+	sqlSession, err := gorm.Open(Manager.Settings.Dialector, &gorm.Config{})
 	Manager.SqlSession = sqlSession
 
 	if err != nil {
@@ -19,9 +32,9 @@ func (Manager *GormDBManager) Init(Dialector gorm.Dialector, DBMaxIdleConns int,
 	}
 
 	sqlDB, _ := sqlSession.DB()
-	sqlDB.SetMaxIdleConns(DBMaxIdleConns)
-	sqlDB.SetMaxOpenConns(DBMaxOpenConns)
-	sqlDB.SetConnMaxLifetime(time.Duration(ConnMaxLifeTimeMinutes) * time.Minute)
+	sqlDB.SetMaxIdleConns(int(Manager.Settings.DBMaxIdleConns))
+	sqlDB.SetMaxOpenConns(int(Manager.Settings.DBMaxOpenConns))
+	sqlDB.SetConnMaxLifetime(time.Duration(Manager.Settings.ConnMaxLifeTimeMinutes) * time.Minute)
 }
 
 func (Manager *GormDBManager) IsConnected() bool {
@@ -33,37 +46,21 @@ func (Manager *GormDBManager) IsConnected() bool {
 	return true
 }
 
-func (Manager *GormDBManager) ProvideConnection() *gorm.DB {
+func (Manager *GormDBManager) ProvideDBConnection() any {
 	return Manager.SqlSession
 }
 
-type DBDialector gorm.Dialector
-type DBMaxIdleConns int
-type DBMaxOpenConns int
-type ConnMaxLifeTimeMinutes int
-
-type DBMSetting struct {
-	Dialector              DBDialector
-	DBMaxIdleConns         DBMaxIdleConns
-	DBMaxOpenConns         DBMaxOpenConns
-	ConnMaxLifeTimeMinutes ConnMaxLifeTimeMinutes
-}
-
-func NewDBMSetting(dialector DBDialector, dbMaxIdleConns DBMaxIdleConns,
-	dbMaxOpenConns DBMaxOpenConns, ConnMaxLifeTimeMinutes ConnMaxLifeTimeMinutes) *DBMSetting {
-	return &DBMSetting{Dialector: dialector,
+func NewGORMDBMSetting(dialector DBDialector, dbMaxIdleConns DBMaxIdleConns,
+	dbMaxOpenConns DBMaxOpenConns, ConnMaxLifeTimeMinutes ConnMaxLifeTimeMinutes) *GORMDBMSetting {
+	return &GORMDBMSetting{Dialector: dialector,
 		DBMaxIdleConns:         dbMaxIdleConns,
 		DBMaxOpenConns:         dbMaxOpenConns,
 		ConnMaxLifeTimeMinutes: ConnMaxLifeTimeMinutes}
 }
 
-func NewGormDBManager(dbmSetting *DBMSetting) *GormDBManager {
-	Manager := GormDBManager{}
-	Manager.Init(
-		dbmSetting.Dialector,
-		int(dbmSetting.DBMaxIdleConns),
-		int(dbmSetting.DBMaxOpenConns),
-		int(dbmSetting.ConnMaxLifeTimeMinutes))
+func NewGormDBManager(dbmSetting *GORMDBMSetting) *GormDBManager {
+	Manager := GormDBManager{Settings: dbmSetting}
+	Manager.Init()
 
 	return &Manager
 }

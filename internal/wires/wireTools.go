@@ -11,6 +11,11 @@ import (
 )
 
 func InitGormDBManager(Dialector dbManager.DBDialector, DBMaxIdleConns dbManager.DBMaxIdleConns, DBMaxOpenConns dbManager.DBMaxOpenConns, ConnMaxLifeTimeMinutes dbManager.ConnMaxLifeTimeMinutes) *dbManager.GormDBManager {
-	wire.Build(dbManager.NewGormDBManager, dbManager.NewDBMSetting)
+	wire.Build(dbManager.NewGormDBManager, dbManager.NewGORMDBMSetting)
+	return nil
+}
+
+func InitCSVDBManager(filename dbManager.FileName) *dbManager.CSVDBManager {
+	wire.Build(dbManager.NewCSVDBManager, dbManager.NewCSVDBMSetting)
 	return nil
 }

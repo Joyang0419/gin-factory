@@ -17,9 +17,10 @@ var sqlUrl = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc
 )
 
 var (
-	DBManager = wires.InitGormDBManager(
+	GORMDBManager = wires.InitGORMDBManager(
 		mysql.Open(sqlUrl),
 		dbManager.DBMaxIdleConns(configs.ConfigSet.Db.MaxIdleConnection),
 		dbManager.DBMaxOpenConns(configs.ConfigSet.Db.MaxOpenConnection),
 		dbManager.ConnMaxLifeTimeMinutes(configs.ConfigSet.Db.ConnMaxLifetimeMinutes))
+	CSVDBManager = wires.InitCSVDBManager("test.csv")
 )

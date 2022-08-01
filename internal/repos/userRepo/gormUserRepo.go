@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"gorm.io/gorm"
 )
 
 type GormUserRepo struct {
@@ -27,7 +28,7 @@ func (userRepo *GormUserRepo) CreateUser(
 		Name:        name,
 	}
 
-	DBConnection := userRepo.DBManager.ProvideConnection()
+	DBConnection := userRepo.DBManager.ProvideDBConnection().(gorm.DB)
 
 	result := DBConnection.Select("Vendor", "Account", "AccountType", "Password", "Name").Create(
 		&user)
@@ -43,7 +44,7 @@ func (userRepo *GormUserRepo) CreateUser(
 func (userRepo *GormUserRepo) GetAllUsers() []entities.UserEntity {
 	var users []entities.UserEntity
 
-	DBConnection := userRepo.DBManager.ProvideConnection()
+	DBConnection := userRepo.DBManager.ProvideDBConnection().(gorm.DB)
 
 	rows, err := DBConnection.Find(&users).Rows()
 
@@ -75,7 +76,7 @@ func (userRepo *GormUserRepo) GetAllUsers() []entities.UserEntity {
 func (userRepo *GormUserRepo) DeleteUser(id int) (bool, error) {
 	var user entities.UserEntity
 
-	DBConnection := userRepo.DBManager.ProvideConnection()
+	DBConnection := userRepo.DBManager.ProvideDBConnection().(gorm.DB)
 
 	result := DBConnection.Delete(&user, id)
 
@@ -89,7 +90,7 @@ func (userRepo *GormUserRepo) DeleteUser(id int) (bool, error) {
 
 func (userRepo *GormUserRepo) GetUser(id int) *entities.UserEntity {
 	var user entities.UserEntity
-	DBConnection := userRepo.DBManager.ProvideConnection()
+	DBConnection := userRepo.DBManager.ProvideDBConnection().(gorm.DB)
 	result := DBConnection.First(&user, id)
 
 	if result.RowsAffected != 1 {
@@ -108,7 +109,7 @@ func (userRepo *GormUserRepo) GetUser(id int) *entities.UserEntity {
 }
 
 func (userRepo *GormUserRepo) UpdateUser(id int, name string) (bool, error) {
-	DBConnection := userRepo.DBManager.ProvideConnection()
+	DBConnection := userRepo.DBManager.ProvideDBConnection().(gorm.DB)
 	result := DBConnection.Model(&entities.UserEntity{}).Where("id = ?", id).Update("name", name)
 	fmt.Println(result.RowsAffected)
 	if result.RowsAffected != 1 {

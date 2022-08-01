@@ -1,9 +1,7 @@
 package dbManager
 
-import "gorm.io/gorm"
-
 type InterfaceDBManger interface {
-	Init(Dialector gorm.Dialector, DBMaxIdleConns int, DBMaxOpenConns int, ConnMaxLifeTimeMinutes int)
+	Init()
 	IsConnected() bool
-	ProvideConnection() *gorm.DB
+	ProvideDBConnection() any
 }

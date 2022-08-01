@@ -4,7 +4,6 @@ import (
 	"aCupOfGin/internal/common/rsp"
 	"aCupOfGin/internal/entities"
 	"aCupOfGin/internal/services/userService"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"strconv"
 )
@@ -50,7 +49,6 @@ func (uc *ImplementUserController) GetUser(c *gin.Context) {
 
 func (uc *ImplementUserController) GetUsers(c *gin.Context) {
 	users := uc.UserService.GetAllUsers()
-	fmt.Println(users)
 	rsp.Success(c, "success", users)
 }
 
